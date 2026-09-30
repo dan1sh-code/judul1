@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1> Sistem Informasi Data Mahasiswa Praktikum 1 Kelas PW-E</h1>
+        <p> Ini adalah sistem untuk mengetahui data-data dari mahasiswa</p>
+        <img src="foto.jpg.png" alt="foto-mahasiswa" width="200" weight="200">
+    </header>
+    <hr>
+    <nav>
+        <ul>
+            <li> <a href="#informasi" >informasi aplikasi</a></li>
+            <li> <a href="#daftar-mahasiswa"  >daftar mahasiswa</a></li>
+            <li> <a href="#tambah-mahasiswa" >Tambah Mahasiswa Baru</a></li>
+        </ul>
+    </nav>
+    <hr>
+    <main>
+        <section id="informasi-sistem">
+            <h2> informasi sistem</h2>
+            <p> informasi mengenai sistem ini</p>
+            <article> ini adalah sistem untuk data mahasiswa
+                <h3> informasi</h3>
+                <p> bagian informasi</p>
+            </article>
+        </section>
+        <hr>
+        <section id="daftar-Mahasiswa"> 
+            <h2> Daftar Mahasiswa Aktif</h2>
+            
+            <p>untuk menambahkan data mahasiswa</p>
+            <table border="1", cellpadding="8", cellspacing="0">
+                <thead>
+                    <tr>
+                        <th> No</th>
+                        <th> Foto</th>
+                        <th> NPM</th>
+                        <th> Nama Lengkap</th>
+                        <th> Program Studi</th>
+                        <th> Angkatan</th>
+                        <th> Email</th>
+                    </tr>
+                    
+                </thead>
+                 <tbody>
+                    <tr>
+                     <td> 1 </td>
+                     <td> foto.jpg.png</td>
+                     <td> 2415061062</td>  
+                     <td>Fadhlan ramadhan</td> 
+                     <td> Teknik Informatika</td>
+                     <td> 2024</td>
+                     <td> fadhlanramadhan@gmail.com</td> 
+                    </tr>
+                    <tr>   <td> 1 </td>
+                     <td> foto.jpg.pgn</td>
+                     <td> 2415061062</td>  
+                     <td>Fadhlan ramadhan</td> 
+                     <td> Teknik Informatika</td>
+                     <td> 2024</td>
+                     <td> fadhlanramadhan@gmail.com</td> 
+                    </tr>
+                    <tr> <td> 1 </td>
+                     <td> foto.pgn</td>
+                     <td> 2415061062</td>  
+                     <td>Fadhlan ramadhan</td> 
+                     <td> Teknik Informatika</td>
+                     <td> 2024</td>
+                     <td> fadhlanramadhan@gmail.com</td> 
+                    </tr>
+                 </tbody>
+            </table>
+        </section>
+        <hr>
+        <section id="form-tambah">
+            <h2> Tambah Mahasiswa baru</h2>
+            <p> untuk tambahin mahasiswa</p>
+            <form action="#" method="post">
+                <fieldset>
+                    <legend>
+                        <p> <label for="npm"> Nomor Pokok Mahasiswa (NPM)</label><br>
+                            <input
+                            type="text"
+                            id="npm"
+                            name="npm"
+                            placeholder="Contoh: 2415061062"
+                            required
+                            pattern="[0-9]{8-12}"
+                            title="NPM harus berisi 8-12 digit"
+                            <br>
+                            <small> Npm wajib untuk diisi berupa angka</small>
+                        </p>
+
+                        <p> <label for="nama">Nama Lengkap</label> <br>
+                        <input
+                        type="text"
+                        id="nama"
+                        name="nama"
+                        placeholder="contoh : Fadhlan Ramadhan"
+                        required
+                        minlength="3"
+                        maxlength="100"
+                        <br>
+                        <small> nama harus diisi dengan text </small>
+                        </p>
+                        <p><label for="Program-studi"> Masukkan Program Studi</label> <br>
+                        <select id="Program-studi" name="program_studi" required>
+                            <option value=""> Program Studi </option>
+                            <option value="Teknik Informatika"> teknik informatika</option>
+                            <option value="Sistem informasi"> Sistem Informasi</option>
+                        <br>
+                    <small> pilih program studi anda</small></select>
+                    </p>
+                        <p><label for="angkatan"> Tahun angkatan </label> <br> 
+                            <input
+                            type="number"
+                            id="angkatan"
+                            name="angkatan"
+                            placeholder=" contoh : 2024"
+                            required
+                            min="2018"
+                            max="2026" <br>
+                            <small> pilih tahun</small>
+                        </p>
+                        <p><label for="email"> alamat email </label> <br>
+                            <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder=" contoh : email@example.com"
+                            required
+                            <br>
+                        </p>
+                        <p>
+                            <button
+                            type="submit"> Simpan data mahasiswa</button>
+                            <button
+                            type="reset"> Reset Formulir</button>
+                        </p>
+                    </legend>
+                </fieldset>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
