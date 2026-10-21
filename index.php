@@ -7,20 +7,19 @@
 
 // memanggil file functions.php
 require_once __DIR__ . '/includes/functions.php';
-$page_title =' uji fungsi modular - percobaan 1';
-$daftar_mahasiswa = get_all_mahasiswa();
-$total_semua = count_total_mahasiswa();
-$total_tampil = count($daftar_mahasiswa);
+$page_title = 'Beranda - Sistem Informasi Data Mahasiswa';
 
 // Ambil keyword pencarian jika ada
+$search = $_GET['search'] ?? '';
+$keyword = is_string($search) ? trim($search) : '';
 
-// Percobaan 4-4 Langkah 2
-$keyword = isset($_GET['search']) ? trim($_GET['search']) : '';
 $daftar_mahasiswa = get_all_mahasiswa($keyword);
+$total_semua = count_total_mahasiswa();
+$total_tampil = count($daftar_mahasiswa);
+$csrf_token = csrf_token();
 
 // Ambil flash message dari session jika tersedia
 $flash = get_flash_message();
-$page_title = 'Beranda - Sistem Informasi Data Mahasiswa';
 require_once __DIR__ . '/includes/header.php';
 ?>
 
@@ -130,18 +129,30 @@ require_once __DIR__ . '/includes/header.php';
                             <td><strong><?= htmlspecialchars ($mhs['npm']) ?></strong></td>
                             <td><?=  htmlspecialchars ($mhs['nama']) ?></td>
                             <td><span class="badge"><?=  htmlspecialchars ($mhs['program_studi']) ?></span></td>
-                            <td><?=  htmlspecialchars ($mhs['angkatan']) ?></td>
-                            <td><a href="mailto:<?=  htmlspecialchars ($mhs['email']) ?>" class="link-email"><? htmlspecialchars = ($mhs['email']) ?></a></td>
+                            <td><?= htmlspecialchars((string) ($mhs['angkatan'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><a href="mailto:<?= htmlspecialchars($mhs['email'], ENT_QUOTES, 'UTF-8') ?>" class="link-email"><?= htmlspecialchars($mhs['email'], ENT_QUOTES, 'UTF-8') ?></a></td>
                             <td>
-                                <!-- Percobaan 4-2 Langkah 5 -->
-                                <a href="proses_hapus.php?id <?=
-urlencode($mhs['npm'] ) ?>"
-class = "btn btn-danger btn-sm"
-onclick="return confirm('apakah anda yankin ingin menghapus mahasiswa: <?=
- htmlspecialchars(addslashes($mhs['nama'])) ?> (npm: <?=
-  htmlspecialchars($mhs['npm']) ?> '); " >
-   hapus
-   </a>
+                                <?php
+                                $pesanHapus = sprintf(
+                                    'Yakin ingin menghapus mahasiswa %s (NPM: %s)?',
+                                    $mhs['nama'],
+                                    $mhs['npm']
+                                );
+                                ?>
+                                <form
+                                    action="proses_hapus.php"
+                                    method="post"
+                                    class="delete-form"
+                                    onsubmit="return confirm(<?= htmlspecialchars(
+                                        json_encode($pesanHapus, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT),
+                                        ENT_QUOTES,
+                                        'UTF-8'
+                                    ) ?>);"
+                                >
+                                    <input type="hidden" name="npm" value="<?= htmlspecialchars($mhs['npm'], ENT_QUOTES, 'UTF-8') ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token, ENT_QUOTES, 'UTF-8') ?>">
+                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -161,6 +172,7 @@ onclick="return confirm('apakah anda yankin ingin menghapus mahasiswa: <?=
     <form action="proses_tambah.php" method="post" class="app-form">
         <fieldset>
             <legend>Data Identitas Mahasiswa</legend>
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token, ENT_QUOTES, 'UTF-8') ?>">
 
             <div class="form-grid">
                 <div class="form-group">
@@ -236,5 +248,4 @@ onclick="return confirm('apakah anda yankin ingin menghapus mahasiswa: <?=
     </form>
 </section>
 
-<!-- memanggil file footer.php -->
-
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

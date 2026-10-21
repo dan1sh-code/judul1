@@ -7,7 +7,34 @@
 
 // Memulai session jika belum aktif
 if (session_status() === PHP_SESSION_NONE) {
+    $is_https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    session_set_cookie_params([
+        'httponly' => true,
+        'secure' => $is_https,
+        'samesite' => 'Lax'
+    ]);
+
     session_start();
+}
+
+if (!headers_sent()) {
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: SAMEORIGIN');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+}
+
+function csrf_token() {
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['csrf_token'];
+}
+
+function validate_csrf_token($token) {
+    return is_string($token)
+        && isset($_SESSION['csrf_token'])
+        && hash_equals($_SESSION['csrf_token'], $token);
 }
 
 /**
@@ -19,7 +46,7 @@ function init_mahasiswa_session() {
           [ 'npm' => '230101001',
             'nama' => 'ahmad fauzi',
             'program_studi' => 'teknik_informatika',
-            'angkatan ' => 2023,
+            'angkatan' => 2023,
             'email' => 'ahmad.fauzi@example.com'
         ],
         [
@@ -39,14 +66,31 @@ function init_mahasiswa_session() {
         ];
 
     }
-    
+
+    foreach ($_SESSION['daftar_mahasiswa'] as $index => $mahasiswa) {
+        if (!is_array($mahasiswa)) {
+            continue;
+        }
+
+        if (!array_key_exists('angkatan', $mahasiswa) && array_key_exists('angkatan ', $mahasiswa)) {
+            $mahasiswa['angkatan'] = $mahasiswa['angkatan '];
+        }
+
+        unset($mahasiswa['angkatan ']);
+        $mahasiswa['angkatan'] ??= '';
+        $_SESSION['daftar_mahasiswa'][$index] = $mahasiswa;
+    }
 }
 
 /**
- * Sanitasi string input untuk keamanan XSS
+ * Normalisasi input teks; output harus tetap di-escape saat dirender.
  */
 function sanitize($data) {
-   return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+    if (!is_string($data) && !is_numeric($data)) {
+        return '';
+    }
+
+    return trim((string) $data);
 }
 
 /**
@@ -54,7 +98,11 @@ function sanitize($data) {
  */
 function get_all_mahasiswa($keyword = '') {
     init_mahasiswa_session();
-    $data = $_SESSION['daftar_mahasiswa'];
+    $data = ($_SESSION['daftar_mahasiswa']);
+
+    if (!is_string($keyword)) {
+        $keyword = '';
+    }
 
     if (empty($keyword)) {
         return $data;
@@ -81,7 +129,7 @@ function get_all_mahasiswa($keyword = '') {
  */
 function count_total_mahasiswa() {
     init_mahasiswa_session();
-   $data = ($_SESSION['daftar-mahasiswa']);
+    return count($_SESSION['daftar_mahasiswa']);
 }
 
 /**
@@ -95,7 +143,7 @@ function tambah_mahasiswa($npm, $nama, $program_studi, $angkatan, $email) {
     $npm = sanitize($npm);
     $nama = sanitize($nama);
     $program_studi = sanitize($program_studi);
-    $angkatan = (int) $angkatan;
+    $angkatan = sanitize($angkatan);
     $email = sanitize($email);
 
 
@@ -114,6 +162,15 @@ function tambah_mahasiswa($npm, $nama, $program_studi, $angkatan, $email) {
             'message' => 'npm harus berupa angka 8 hingga 12 digit!'
         ];
     }
+
+    if (!preg_match('/^[0-9]{4}$/', $angkatan)) {
+        return [
+            'status' => false,
+            'message' => 'Tahun angkatan harus berupa angka 4 digit!'
+        ];
+    }
+
+    $angkatan = (int) $angkatan;
 
     // Cek duplikasi npm
     foreach ($_SESSION['daftar_mahasiswa'] as $mhs) {
@@ -136,6 +193,20 @@ function tambah_mahasiswa($npm, $nama, $program_studi, $angkatan, $email) {
         return [
             'status' => false,
             'message' => 'Tahun angkatan harus berada antara 2018 hingga 2026!'
+        ];
+    }
+
+    $program_studi_valid = [
+        'Teknik Informatika',
+        'Sistem Informasi',
+        'Teknologi Informasi',
+        'Rekayasa Perangkat Lunak'
+    ];
+
+    if (!in_array($program_studi, $program_studi_valid, true)) {
+        return [
+            'status' => false,
+            'message' => 'Program studi yang dipilih tidak valid!'
         ];
     }
 
@@ -200,7 +271,7 @@ function hapus_mahasiswa($npm) {
  function set_flash_message($type, $message) {
     $_SESSION['flash_message'] = [
         'type' => $type,
-        'message '=> $message 
+        'message' => $message
     ];
  }
 
@@ -212,10 +283,3 @@ function hapus_mahasiswa($npm) {
     }
     return null;
  }
-
-
-/**
- * Ambil dan hapus flash message
- */
-
-

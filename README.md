@@ -18,3 +18,12 @@ Buka terminal pada direktori ini dan jalankan server bawaan PHP:
 php -S localhost:8000
 ```
 Buka peramban web pada alamat `http://localhost:8000`.
+
+Proyek ini memerlukan PHP 8.0 atau lebih baru.
+Pencarian menggunakan GET, sedangkan penambahan dan penghapusan data menggunakan POST dengan token CSRF.
+
+## 4. Menjalankan Pengujian
+Jalankan pengujian fungsi dari direktori proyek:
+```bash
+php tests/session_migration_test.php
+```

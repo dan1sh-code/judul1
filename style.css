@@ -327,6 +327,10 @@ main {
     font-size: 0.8rem;
 }
 
+.delete-form {
+    display: inline;
+}
+
 .btn-primary {
     background-color: var(--primary);
     color: #ffffff;
